@@ -81,7 +81,7 @@ export function Editor() {
   };
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="lg:flex flex-col items-center hidden">
             <div className="flex space-x-4 my-4">
                 <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => addElement('rect')}>Add Rectangle</button>
                 <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={() => addElement('text')}>Add Text</button>

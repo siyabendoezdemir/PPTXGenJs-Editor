@@ -6,7 +6,7 @@ import { Github } from 'lucide-react';
 
 export function Navbar() {
     return (
-        <nav className="w-full h-[10%] flex flex-row items-center justify-between md:px-36">
+        <nav className="w-full h-[10%] lg:flex flex-row items-center justify-between md:px-36 hidden">
             <div className=' flex items-center flex-row '>
                 <Image src={logo} alt='pptxgenjs visual editor code generator logo' height={64} />
                 <h1 className='text-2xl font-bold'>pptxgenjs editor <Link href={"https://siya.digital"} target='_blank' className='underline text-sm font-thin'>by siya</Link></h1>

@@ -1,6 +1,6 @@
 "use client"
 import { generateCode } from "@/lib/code";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Rnd } from 'react-rnd';
 import PptxGenJS from 'pptxgenjs';
 
@@ -8,8 +8,8 @@ export default function Home() {
   const [elements, setElements] = useState<PptElement[]>([]);
   const [generatedCode, setGeneratedCode] = useState<string>('');
 
-  const addElement = (type: PptElement['type']) => {
-    const newElement: PptElement = { id: Date.now(), type, x: 50, y: 50, width: 100, height: 50 };
+  const addElement = (type: PptElement['type'], src?: string) => {
+    const newElement: PptElement = { id: Date.now(), type, x: 50, y: 50, width: 100, height: 50, src };
     setElements([...elements, newElement]);
   };
 
@@ -19,6 +19,18 @@ export default function Home() {
 
   const deleteElement = (id: number) => {
     setElements(elements.filter(el => el.id !== id));
+  };
+
+  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const src = e.target?.result as string;
+        addElement('image', src);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleGenerate = async () => {
@@ -54,6 +66,14 @@ export default function Home() {
           fill: { color: "F1F1F1" },
           align: "center"
         });
+      } else if (element.type === 'image') {
+        slide.addImage({
+          data: element.src!,
+          x: element.x / 96,
+          y: element.y / 96,
+          w: element.width / 96,
+          h: element.height / 96
+        });
       }
     });
 
@@ -66,6 +86,7 @@ export default function Home() {
         <div className="flex space-x-4 my-4">
           <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => addElement('rect')}>Add Rectangle</button>
           <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={() => addElement('text')}>Add Text</button>
+          <input type="file" accept="image/*" onChange={handleImageUpload} className="bg-purple-500 text-white px-4 py-2 rounded cursor-pointer" />
         </div>
         <div className="relative bg-gray-200" style={{ width: '960px', height: '540px' }}>
           {elements.map(el => (
@@ -79,8 +100,8 @@ export default function Home() {
               }}
               bounds="parent"
             >
-              <div className="border border-black bg-white flex items-center justify-center" style={{ width: '100%', height: '100%' }}>
-                {el.type === 'text' ? 'Text' : 'Rectangle'}
+              <div className="relative border border-black bg-white flex items-center justify-center" style={{ width: '100%', height: '100%' }}>
+                {el.type === 'text' ? 'Text' : el.type === 'rect' ? 'Rectangle' : <img src={el.src} alt="Uploaded" className="pointer-events-none" style={{ width: '100%', height: '100%' }} />}
                 <button
                   className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 rounded-bl"
                   onClick={() => deleteElement(el.id)}

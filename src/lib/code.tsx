@@ -33,7 +33,7 @@ slide.addText("Sample Text", {
         } else if (element.type === 'image') {
             code += `
 slide.addImage({
-  data: "${element.src}",
+  data: "image source",
   x: ${element.x / 96},
   y: ${element.y / 96},
   w: ${element.width / 96},

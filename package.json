@@ -13,6 +13,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.379.0",
     "next": "14.2.3",
+    "pptxgenjs": "^3.12.0",
     "react": "^18",
     "react-dom": "^18",
     "react-rnd": "^10.4.10",

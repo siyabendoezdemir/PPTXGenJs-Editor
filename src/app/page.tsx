@@ -2,8 +2,7 @@
 import { generateCode } from "@/lib/code";
 import { useState } from "react";
 import { Rnd } from 'react-rnd';
-
-
+import PptxGenJS from 'pptxgenjs';
 
 export default function Home() {
   const [elements, setElements] = useState<PptElement[]>([]);
@@ -18,6 +17,10 @@ export default function Home() {
     setElements(elements.map(el => el.id === id ? { ...el, x, y, width, height } : el));
   };
 
+  const deleteElement = (id: number) => {
+    setElements(elements.filter(el => el.id !== id));
+  };
+
   const handleGenerate = async () => {
     const slides = elements.map(element => ({
       type: element.type,
@@ -26,6 +29,35 @@ export default function Home() {
     const generatedCode = await generateCode(elements);
 
     setGeneratedCode(generatedCode);
+  };
+
+  const downloadPresentation = () => {
+    const pptx = new PptxGenJS();
+    const slide = pptx.addSlide();
+
+    elements.forEach(element => {
+      if (element.type === 'rect') {
+        slide.addShape(pptx.ShapeType.rect, {
+          x: element.x / 96,
+          y: element.y / 96,
+          w: element.width / 96,
+          h: element.height / 96,
+          fill: { color: "FF0000" }
+        });
+      } else if (element.type === 'text') {
+        slide.addText("Sample Text", {
+          x: element.x / 96,
+          y: element.y / 96,
+          w: element.width / 96,
+          h: element.height / 96,
+          color: "363636",
+          fill: { color: "F1F1F1" },
+          align: "center"
+        });
+      }
+    });
+
+    pptx.writeFile({ fileName: "SamplePresentation.pptx" });
   };
 
   return (
@@ -49,11 +81,20 @@ export default function Home() {
             >
               <div className="border border-black bg-white flex items-center justify-center" style={{ width: '100%', height: '100%' }}>
                 {el.type === 'text' ? 'Text' : 'Rectangle'}
+                <button
+                  className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 rounded-bl"
+                  onClick={() => deleteElement(el.id)}
+                >
+                  &times;
+                </button>
               </div>
             </Rnd>
           ))}
         </div>
-        <button className="bg-red-500 text-white px-4 py-2 rounded my-4" onClick={handleGenerate}>Generate Code</button>
+        <div className="flex space-x-4 my-4">
+          <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={handleGenerate}>Generate Code</button>
+          <button className="bg-yellow-500 text-white px-4 py-2 rounded" onClick={downloadPresentation}>Download Test</button>
+        </div>
         {generatedCode && (
           <div className="mt-4 p-4 bg-gray-100 rounded w-full max-w-2xl">
             <h3 className="text-lg font-semibold">Generated Code:</h3>

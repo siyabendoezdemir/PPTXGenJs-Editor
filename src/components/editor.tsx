@@ -1,6 +1,6 @@
 "use client"
 import { generateCode } from "@/lib/code";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Rnd } from 'react-rnd';
 import PptxGenJS from 'pptxgenjs';
 import { Bold, MinusSquare, PlusSquare, X } from "lucide-react";
@@ -32,6 +32,10 @@ export function Editor() {
   const handleDoubleClick = (id: number) => {
     setIsEditing(true);
     setFocusedElement(id);
+    const selectedElement = elements.find(el => el.id === id);
+    if (selectedElement) {
+      setFontSize(selectedElement.fontSize!);
+    }
   };
 
   const handleBlur = (elementId: number) => {
@@ -40,12 +44,12 @@ export function Editor() {
     setText(elements.filter(el => el.id === elementId)[0].text!)
   };
 
-  const increaseFontSize = () => {
-    setFontSize(fontSize + 1);
+  const increaseFontSize = (prevFontSize: number) => {
+    setFontSize((prevFontSize) => prevFontSize + 1);
   };
 
-  const decreaseFontSize = () => {
-    setFontSize(fontSize - 1);
+  const decreaseFontSize = (prevFontSize: number) => {
+    setFontSize((prevFontSize) => prevFontSize - 1);
   };
 
   const toggleBold = () => {
@@ -109,6 +113,25 @@ export function Editor() {
     pptx.writeFile({ fileName: "SamplePresentation.pptx" });
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (focusedElement === null) return;
+      let clickedElement: Element | null = event.target as Element;
+      while (clickedElement) {
+        if (clickedElement.classList.contains('no-deselect')) {
+          return;
+        }
+        clickedElement = clickedElement.parentElement;
+      }
+      setFocusedElement(null);
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [focusedElement]);
+
   return (
     <div className="lg:flex flex-col items-center hidden">
       <div className="flex space-x-4 my-4">
@@ -128,17 +151,18 @@ export function Editor() {
             }}
             bounds="parent"
           >
-            <div className="relative border border-black bg-white flex items-center justify-center" style={{ width: '100%', height: '100%' }} >
-              {el.type === 'text' ? <span className="w-full h-full whitespace-pre-wrap" onDoubleClick={() => handleDoubleClick(el.id)} onBlur={(e) => updateElement(el.id, el.x, el.y, el.width, el.height, e.target.textContent!, el.fontSize!, el.isBold!)} contentEditable={isEditing && focusedElement === el.id} style={{ fontSize: `${el.fontSize}px`, fontWeight: el.isBold ? 'bold' : 'normal' }}>{el.text}</span> : el.type === 'rect' ? 'Rectangle' : <img src={el.src} alt="Uploaded" className="pointer-events-none" style={{ width: '100%', height: '100%' }} />}
+            <div className="relative border border-black bg-white flex items-center justify-center no-deselect" style={{ width: '100%', height: '100%' }} >
+              {el.type === 'text' ? <span className="w-full h-full whitespace-pre-wrap no-deselect" onDoubleClick={() => handleDoubleClick(el.id)} onBlur={(e) => updateElement(el.id, el.x, el.y, el.width, el.height, e.target.textContent!, el.fontSize!, el.isBold!)} contentEditable={isEditing && focusedElement === el.id} style={{ fontSize: `${el.fontSize}px`, fontWeight: el.isBold ? 'bold' : 'normal' }}>{el.text}</span> : el.type === 'rect' ? 'Rectangle' : <img src={el.src} alt="Uploaded" className="pointer-events-none" style={{ width: '100%', height: '100%' }} />}
               {el.type === "text" ? focusedElement === el.id && (
-                <div className="absolute bottom-0 right-0 flex flex-row h-8">
-                  <div className="flex flex-row">
-                    <button className="bg-black text-white px-2 h-8" onClick={() => { increaseFontSize(); updateElement(el.id, el.x, el.y, el.width, el.height, el.text!, fontSize, el.isBold!) }}><PlusSquare /></button>
-                    <button className=" bg-black text-white px-2 h-8" onClick={() => { decreaseFontSize(); updateElement(el.id, el.x, el.y, el.width, el.height, el.text!, fontSize, el.isBold!) }}><MinusSquare /></button>
-                    <button className="bg-black text-white px-2 h-8" onClick={() => { toggleBold(); updateElement(el.id, el.x, el.y, el.width, el.height, el.text!, el.fontSize!, !isBold) }}><Bold /></button>
+                <div className="absolute bottom-0 right-0 flex flex-row h-8 no-deselect">
+                  <div className="flex flex-row no-deselect">
+                    <button className=" bg-black text-white px-2 h-8 no-deselect" onClick={() => { decreaseFontSize(el.fontSize!); updateElement(el.id, el.x, el.y, el.width, el.height, el.text!, fontSize, el.isBold!) }}><MinusSquare /></button>
+                    <span className=" bg-black text-white px-2 h-8 flex items-center no-deselect">{el.fontSize}</span>
+                    <button className="bg-black text-white px-2 h-8 no-deselect" onClick={() => { increaseFontSize(el.fontSize!); updateElement(el.id, el.x, el.y, el.width, el.height, el.text!, fontSize, el.isBold!) }}><PlusSquare /></button>
+                    <button className="bg-black text-white px-2 h-8 no-deselect" onClick={() => { toggleBold(); updateElement(el.id, el.x, el.y, el.width, el.height, el.text!, el.fontSize!, !isBold) }}><Bold /></button>
                   </div>
                   <button
-                    className="bg-red-500 text-white px-2 h-8"
+                    className="bg-red-500 text-white px-2 h-8 no-deselect"
                     onClick={() => deleteElement(el.id)}
                   >
                     <X />

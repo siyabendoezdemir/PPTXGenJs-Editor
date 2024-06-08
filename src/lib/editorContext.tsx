@@ -12,7 +12,7 @@ interface EditorContextType {
     addElement: (type: PptElement['type'], src?: string) => void;
     updateElement: (id: number, x: number, y: number, width: number, height: number, text: string, fontSize: number, isBold: boolean) => void;
     deleteElement: (id: number) => void;
-    handleDoubleClick: (id: number) => void;
+    handleEdit: (id: number) => void;
     handleBlur: (elementId: number) => void;
     increaseFontSize: (prevFontSize: number) => void;
     decreaseFontSize: (prevFontSize: number) => void;
@@ -52,7 +52,6 @@ export const EditorProvider = ({ children }: { children: ReactNode }) => {
     const addElement = (type: PptElement['type'], src?: string) => {
         const newElement: PptElement = { id: Date.now(), type, x: 50, y: 50, width: 100, height: 50, src, text, fontSize, isBold };
         setElements([...elements, newElement]);
-        console.log(elements);
     };
 
     const updateElement = (id: number, x: number, y: number, width: number, height: number, text: string, fontSize: number, isBold: boolean) => {
@@ -63,7 +62,7 @@ export const EditorProvider = ({ children }: { children: ReactNode }) => {
         setElements(elements.filter(el => el.id !== id));
     };
 
-    const handleDoubleClick = (id: number) => {
+    const handleEdit = (id: number) => {
         setIsEditing(true);
         setFocusedElement(id);
         const selectedElement = elements.find(el => el.id === id);
@@ -102,7 +101,7 @@ export const EditorProvider = ({ children }: { children: ReactNode }) => {
             addElement,
             updateElement,
             deleteElement,
-            handleDoubleClick,
+            handleEdit,
             handleBlur,
             increaseFontSize,
             decreaseFontSize,

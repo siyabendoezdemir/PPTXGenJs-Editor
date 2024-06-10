@@ -9,7 +9,7 @@ interface EditorContextType {
     isBold: boolean;
     isEditing: boolean;
     focusedElement: number | null;
-    addElement: (type: PptElement['type'], src?: string) => void;
+    addElement: (type: PptElement['type'], options?: { imageSrc?: string, placeholderText?: string }) => void;
     updateElement: (id: number, x: number, y: number, width: number, height: number, text: string, fontSize: number, isBold: boolean) => void;
     deleteElement: (id: number) => void;
     handleEdit: (id: number) => void;
@@ -31,7 +31,7 @@ export const EditorContext = createContext<EditorContextType | undefined>(undefi
 export const EditorProvider = ({ children }: { children: ReactNode }) => {
     const [elements, setElements] = useState<PptElement[]>([]);
     const [generatedCode, setGeneratedCode] = useState<string>('');
-    const [text, setText] = useState<string>('');
+    const [text, setText] = useState<string>('text');
     const [fontSize, setFontSize] = useState<number>(12);
     const [isBold, setIsBold] = useState<boolean>(false);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -43,14 +43,14 @@ export const EditorProvider = ({ children }: { children: ReactNode }) => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const src = e.target?.result as string;
-                addElement('image', src);
+                addElement('image', { imageSrc: src });
             };
             reader.readAsDataURL(file);
         }
     };
 
-    const addElement = (type: PptElement['type'], src?: string) => {
-        const newElement: PptElement = { id: Date.now(), type, x: 50, y: 50, width: 100, height: 50, src, text, fontSize, isBold };
+    const addElement = (type: PptElement['type'], options?: { imageSrc?: string, placeholderText?: string }) => {
+        const newElement: PptElement = { id: Date.now(), type, x: 50, y: 50, width: 100, height: 50, src: options?.imageSrc, text, fontSize, isBold };
         setElements([...elements, newElement]);
     };
 

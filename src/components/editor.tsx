@@ -16,7 +16,7 @@ export function Editor() {
       const reader = new FileReader();
       reader.onload = (e) => {
         const src = e.target?.result as string;
-        editorContext.addElement("image", src);
+        editorContext.addElement("image", { imageSrc: src });
       };
       reader.readAsDataURL(file);
     }

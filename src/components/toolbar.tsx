@@ -17,7 +17,7 @@ export function ToolBar() {
       const reader = new FileReader();
       reader.onload = (e) => {
         const src = e.target?.result as string;
-        editorContext.addElement('image', src);
+        editorContext.addElement('image', { imageSrc: src });
       };
       reader.readAsDataURL(file);
     }
@@ -94,7 +94,7 @@ export function ToolBar() {
           <Separator className="mx-2 h-6" orientation="vertical" />
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button size="icon" variant="ghost" onClick={() => editorContext.addElement("text")}>
+              <Button size="icon" variant="ghost" onClick={() => editorContext.addElement("text", { placeholderText: "text" })}>
                 <Type className="h-4 w-4" />
                 <span className="sr-only">Add text</span>
               </Button>

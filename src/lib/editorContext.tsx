@@ -13,7 +13,8 @@ interface EditorContextType {
     updateElement: (id: number, x: number, y: number, width: number, height: number, text: string, fontSize: number, isBold: boolean) => void;
     deleteElement: (id: number) => void;
     handleEdit: (id: number) => void;
-    handleBlur: (elementId: number) => void;
+    handleBlur: (event: any, elementId: number) => void;
+    handleColorChange: (color: string) => void;
     increaseFontSize: (prevFontSize: number) => void;
     decreaseFontSize: (prevFontSize: number) => void;
     toggleBold: () => void;
@@ -71,10 +72,21 @@ export const EditorProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const handleBlur = (elementId: number) => {
-        setIsEditing(false);
-        setFocusedElement(null);
-        setText(elements.filter(el => el.id === elementId)[0].text!);
+    const handleColorChange = (color: string) => {
+        if (focusedElement !== null) {
+            const selectedElement = elements.find(el => el.id === focusedElement);
+            if (selectedElement) {
+                selectedElement.color = color;
+            }
+        }
+    }
+
+    const handleBlur = (event: any, elementId: number) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+            setIsEditing(false);
+            setFocusedElement(null);
+            setText(elements.filter(el => el.id === elementId)[0].text!);
+        }
     };
 
     const increaseFontSize = (prevFontSize: number) => {
@@ -103,6 +115,7 @@ export const EditorProvider = ({ children }: { children: ReactNode }) => {
             deleteElement,
             handleEdit,
             handleBlur,
+            handleColorChange,
             increaseFontSize,
             decreaseFontSize,
             toggleBold,

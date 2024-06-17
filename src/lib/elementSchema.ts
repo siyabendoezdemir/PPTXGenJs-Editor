@@ -6,6 +6,7 @@ interface PptElement {
   width: number;
   height: number;
   src?: string;
+  color?: string;
   text?: string;
   fontSize?: number;
   isBold?: boolean;

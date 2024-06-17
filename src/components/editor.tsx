@@ -138,16 +138,16 @@ export function Editor() {
                   style={{
                     fontSize: `${el.fontSize}px`,
                     fontWeight: el.isBold ? "bold" : "normal",
+                    color: el.color ? el.color : "#000000"
                   }}
                 >
                   {el.text}
                 </span>
               ) : el.type === "rect" ? (
                 <div
-                  className={`bg-black w-`}
                   onDragStart={(e) => e.preventDefault()}
                   onClick={() => editorContext.handleEdit(el.id)}
-                  style={{ width: "100%", height: "100%" }} />
+                  style={{ width: "100%", height: "100%", background: el.color ? el.color : "#000000" }} />
               ) : (
                 <img
                   src={el.src}

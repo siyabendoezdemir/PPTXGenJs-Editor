@@ -31,9 +31,15 @@ export function ToolBar() {
     }
   };
 
+  async function handleColorChange(color: string){
+    setColor(color);
+    editorContext.handleColorChange(color);
+  }
+
   useEffect(() => {
-    console.log(color)
-  }, [color])
+    console.log(editorContext.focusedElement)
+    console.log(editorContext.elements)
+  }, [editorContext.focusedElement])
 
   return (
     <div className="flex items-center px-4 py-2 bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-800">
@@ -158,14 +164,14 @@ export function ToolBar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <TooltipTrigger asChild>
-                  <Button size="icon" variant="ghost" disabled>
-                    <span style={{ background: color }} className={`w-6 h-6 rounded-full`} />
+                  <Button size="icon" variant="ghost" disabled={editorContext.focusedElement === null}>
+                    <span style={{ background: color }} className={`w-6 h-6 rounded-full transition-colors`} />
                     <span className="sr-only">Insert video</span>
                   </Button>
                 </TooltipTrigger>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <ColorPicker color={color} onColorChange={setColor} />
+              <DropdownMenuContent className="no-deselect">
+                <ColorPicker color={color} onColorChange={handleColorChange} />
               </DropdownMenuContent>
             </DropdownMenu>
             <TooltipContent>Insert video</TooltipContent>

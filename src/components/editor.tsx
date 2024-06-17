@@ -156,7 +156,11 @@ export function Editor() {
                   {el.text}
                 </span>
               ) : el.type === "rect" ? (
-                "Rectangle"
+                <div
+                  className={`bg-black w-`}
+                  onDragStart={(e) => e.preventDefault()}
+                  onClick={() => editorContext.handleEdit(el.id)}
+                  style={{ width: "100%", height: "100%" }} />
               ) : (
                 <img
                   src={el.src}

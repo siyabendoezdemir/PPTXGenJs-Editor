@@ -3,10 +3,18 @@ import { Button } from "@/components/ui/button"
 import { TooltipTrigger, TooltipContent, Tooltip, TooltipProvider } from "@/components/ui/tooltip"
 import { Separator } from "@/components/ui/separator"
 import { ChangeEvent, JSX, SVGProps, useContext } from "react"
-import { Image, Text, Type } from "lucide-react"
+import { Image, ShapesIcon, Text, Type } from "lucide-react"
 import { useEditorLogic } from '@/lib/editorLogic';
 import { useEditorContext } from "@/lib/editorContext"
 import { Input } from "./ui/input"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function ToolBar() {
   const editorContext = useEditorContext();
@@ -122,6 +130,23 @@ export function ToolBar() {
                 <span className="sr-only">Insert video</span>
               </Button>
             </TooltipTrigger>
+            <TooltipContent>Insert video</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="ghost">
+                    <ShapesIcon className="h-4 w-4" />
+                    <span className="sr-only">Insert video</span>
+                  </Button>
+                </TooltipTrigger>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => editorContext.addElement("rect")}>Rectangle</DropdownMenuItem>
+                <DropdownMenuItem disabled>Ellipsis</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <TooltipContent>Insert video</TooltipContent>
           </Tooltip>
         </TooltipProvider>

@@ -10,21 +10,8 @@ import { EditorContext, useEditorContext } from "@/lib/editorContext";
 export function Editor() {
   const editorContext = useEditorContext();
 
-  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const src = e.target?.result as string;
-        editorContext.addElement("image", { imageSrc: src });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleGenerate = async () => {
     const generatedCode = await generateCode(editorContext.elements);
-
     editorContext.setGeneratedCode(generatedCode);
   };
 

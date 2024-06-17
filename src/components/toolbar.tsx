@@ -1,23 +1,23 @@
+"use client"
 
 import { Button } from "@/components/ui/button"
 import { TooltipTrigger, TooltipContent, Tooltip, TooltipProvider } from "@/components/ui/tooltip"
 import { Separator } from "@/components/ui/separator"
-import { ChangeEvent, JSX, SVGProps, useContext } from "react"
+import { ChangeEvent, JSX, SVGProps, useEffect, useState } from "react"
 import { Image, ShapesIcon, Text, Type } from "lucide-react"
-import { useEditorLogic } from '@/lib/editorLogic';
 import { useEditorContext } from "@/lib/editorContext"
-import { Input } from "./ui/input"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ColorPicker } from "./ui/color-picker"
 
 export function ToolBar() {
   const editorContext = useEditorContext();
+
+  const [color, setColor] = useState("#000000");
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -30,6 +30,10 @@ export function ToolBar() {
       reader.readAsDataURL(file);
     }
   };
+
+  useEffect(() => {
+    console.log(color)
+  }, [color])
 
   return (
     <div className="flex items-center px-4 py-2 bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-800">
@@ -145,6 +149,23 @@ export function ToolBar() {
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={() => editorContext.addElement("rect")}>Rectangle</DropdownMenuItem>
                 <DropdownMenuItem disabled>Ellipsis</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <TooltipContent>Insert video</TooltipContent>
+          </Tooltip>
+          <Separator className="mx-2 h-6" orientation="vertical" />
+          <Tooltip>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="ghost" disabled>
+                    <span style={{ background: color }} className={`w-6 h-6 rounded-full`} />
+                    <span className="sr-only">Insert video</span>
+                  </Button>
+                </TooltipTrigger>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <ColorPicker color={color} onColorChange={setColor} />
               </DropdownMenuContent>
             </DropdownMenu>
             <TooltipContent>Insert video</TooltipContent>

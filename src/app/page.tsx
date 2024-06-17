@@ -4,7 +4,6 @@ import { Editor } from "@/components/editor";
 import { Navbar } from "@/components/navbar";
 import { Separator } from "@/components/ui/separator";
 import { EditorContext, EditorProvider } from "@/lib/editorContext";
-import { useEditorLogic } from "@/lib/editorLogic";
 
 export default function Home() {
   return (
